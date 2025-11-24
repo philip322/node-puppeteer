@@ -8,6 +8,7 @@ RUN apk add --no-cache \
     harfbuzz \
     ca-certificates \
     ttf-freefont \
+    font-noto-cjk \
     python3 \
     make \
     g++
