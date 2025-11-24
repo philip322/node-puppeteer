@@ -48,4 +48,4 @@ COPY entrypoint.sh /entrypoint.sh
 RUN chmod 755 /entrypoint.sh
 # 最终命令：启动 cron 并给 shell
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["crond -f -l 4 && echo '定时任务已启动！直接敲 node xxx.js 运行脚本' && exec sh"]
+CMD ["crond", "-f", "-l", "4"]
