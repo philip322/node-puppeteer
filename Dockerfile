@@ -35,8 +35,9 @@ WORKDIR /app
 COPY package.json ./
 RUN npm install --production --verbose --legacy-peer-deps
 COPY index.js ./
-COPY entrypoint.sh /entrypoint.sh
 COPY crontab ./
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod 755 /entrypoint.sh
 
 # 创建 crontab（保留你之前的定时任务）
 RUN mkdir -p /var/spool/cron/crontabs && \
