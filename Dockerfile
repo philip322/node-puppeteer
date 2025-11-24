@@ -11,7 +11,6 @@ RUN apk add --no-cache \
     font-noto-cjk \
     bash \
     curl \
-    python3 \
     make \
     g++
 
@@ -36,7 +35,7 @@ RUN chmod 600 /root/.ssh/id_cron && \
 WORKDIR /app
 COPY package.json ./
 RUN npm install --production --verbose --legacy-peer-deps
-RUN apk del make g++ python3
+RUN apk del make g++ && apk cache clean
 COPY index.js ./
 COPY crontab ./
 
