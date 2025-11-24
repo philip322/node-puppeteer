@@ -1,22 +1,30 @@
-# 彻底放弃 CentOS 7，直接用官方推荐的 Alpine
 FROM node:20-alpine
 
-# 安装系统自带的 chromium 和必要字体库
+# 安装所有依赖（构建 + 运行时）
 RUN apk add --no-cache \
     chromium \
     nss \
     freetype \
     harfbuzz \
     ca-certificates \
-    ttf-freefont
+    ttf-freefont \
+    python3 \
+    make \
+    g++
 
-# 告诉 puppeteer 别自己下载了，用系统的
+# npm 配置（加速 + 清理）
+RUN npm config set registry https://registry.npmmirror.com/ && \
+    npm cache clean --force
+
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
 WORKDIR /app
+
 COPY package*.json ./
-RUN npm install --production
+
+RUN npm install --production --verbose --legacy-peer-deps
 
 COPY . .
+
 CMD ["node", "index.js"]
