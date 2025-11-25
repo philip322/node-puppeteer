@@ -22,6 +22,7 @@ COPY package.json ./
 COPY index.js ./
 
 VOLUME /data
+RUN ln -s /root/node_modules /data/node_modules
 
 # 最终命令：启动 cron 并给 shell
 ENTRYPOINT ["/entrypoint.sh"]
