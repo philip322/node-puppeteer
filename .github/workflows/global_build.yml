@@ -1,4 +1,4 @@
-name: Build and Push Docker image
+name: Build-image-global-puppeteer
 
 on:
   workflow_dispatch:
