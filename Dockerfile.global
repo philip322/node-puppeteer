@@ -6,7 +6,13 @@ RUN apk add --no-cache python3 make g++
 # npm 配置（加速 + 清理）
 RUN npm config set registry https://registry.npmmirror.com/ && \
     npm cache clean --force
-RUN npm install -g puppeteer --legacy-peer-deps --save-exact
+RUN npm install -g puppeteer@latest --legacy-peer-deps --save-exact
+# 关键：自动找到 puppeteer 真实安装路径并复制
+RUN PUPPETEER_PATH=$(npm root -g)/puppeteer && \
+    echo "找到 puppeteer 路径: $PUPPETEER_PATH" && \
+    mkdir -p /puppeteer-global && \
+    cp -r "$PUPPETEER_PATH" /puppeteer-global/
+
 
 # ========= 第2阶段：运行时极致精简镜像 =========
 FROM node:20-alpine
@@ -20,11 +26,11 @@ RUN apk add --no-cache \
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
     PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium-browser
 
-# 复制第1阶段全局安装的 puppeteer（只复制二进制和 node_modules）
-COPY --from=builder /usr/lib/node_modules/puppeteer /usr/lib/node_modules/puppeteer
-COPY --from=builder /usr/bin/puppeteer /usr/bin/puppeteer
-# 建立软链接让全局命令可用
-RUN ln -s /usr/lib/node_modules/puppeteer/node_modules/.bin/puppeteer /usr/bin/puppeteer || true
+# 复制第1阶段找到的 puppeteer
+COPY --from=builder /puppeteer-global/puppeteer /usr/lib/node_modules/puppeteer
+
+# 修复全局命令（超级关键！）
+RUN ln -sf /usr/lib/node_modules/puppeteer/node_modules/.bin/puppeteer /usr/bin/puppeteer
 
 # SSH + cron 目录
 RUN mkdir -p /root/.ssh /var/spool/cron/crontabs /var/log && chmod 700 /root/.ssh && \
