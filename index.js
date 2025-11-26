@@ -96,7 +96,6 @@ import puppeteer from 'puppeteer';
 
 (async () => {
   console.log('正在启动 Chromium...');
-
   const browser = await puppeteer.launch({
     headless: 'new',
     executablePath: '/usr/bin/chromium-browser',
@@ -116,7 +115,8 @@ import puppeteer from 'puppeteer';
   try {
     console.log('浏览器启动成功，准备打开页面...');
     const page = await browser.newPage();
-    
+    await page.emulateTimezone('Asia/Shanghai');
+  
     await page.goto('https://time.yingming006.cn/', { 
       waitUntil: 'domcontentloaded', 
       timeout: 30000 
