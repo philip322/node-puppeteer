@@ -16,7 +16,7 @@ else
     if [ -d "/data" ]; then
         cp -a /root/.ssh/id_cron* /data/
     fi
-if
+fi
 chmod 600 /root/.ssh/id_cron*
 
 cat <<EOF > /root/.ssh/config
